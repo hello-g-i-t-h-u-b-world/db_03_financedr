@@ -1,11 +1,5 @@
 import flet as ft
 import service
-# # import views.account_view
-# from views.account_view import create_account_view
-# from views.holding_view import create_holding_view
-# from views.price_view import create_price_view
-# from views.join_view import create_join_view
-# from views.asset_view import create_asset_view
 import views
 
 
@@ -30,7 +24,7 @@ def main(page: ft.Page):
 
     tab_assets = views.create_asset_view(df, search_assets)
 
-    accounts_df = None
+    accounts_df = service.get_accounts(con)
     tab_accounts = views.create_account_view(accounts_df)
 
     holdings_df = None
