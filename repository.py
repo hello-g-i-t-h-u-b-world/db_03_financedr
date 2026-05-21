@@ -115,8 +115,8 @@ def get_accounts_count(con: duckdb.DuckDBPyConnection) -> int:
     테이블의 Cardinality (tuple 개수) 반환
     """
     return con.execute("SELECT COUNT(*) FROM account").fetchone()[0] 
-    
-    
+
+
 def save_accounts(con: duckdb.DuckDBPyConnection, df: pd.DataFrame):
     """
     계좌 데이터 저장
@@ -131,5 +131,33 @@ def find_all_accounts(con: duckdb.DuckDBPyConnection) -> pd.DataFrame:
     계좌 검색
     """
     return con.execute("SELECT * FROM account ORDER BY account_id").df()
+
+# endregion
+
+
+# =========================================================================
+# region: DuckDB holding
+# =========================================================================        
+def get_holdings_count(con: duckdb.DuckDBPyConnection) -> int:
+    """
+    테이블의 Cardinality (tuple 개수) 반환
+    """
+    return con.execute("SELECT COUNT(*) FROM holding").fetchone()[0] 
+
+
+def save_holdings(con: duckdb.DuckDBPyConnection, df: pd.DataFrame):
+    """
+    보유 데이터 저장
+    """
+    print('[INFO] holding 저장 시작')
+    con.execute("INSERT OR IGNORE INTO holding SELECT * FROM df")
+    print('[INFO] holding 저장 완료')
+
+
+def find_all_holdings(con: duckdb.DuckDBPyConnection) -> pd.DataFrame:
+    """
+    모든 보유 데이터 검색
+    """
+    return con.execute("SELECT * FROM holding ORDER BY quantity DESC").df()
 
 # endregion
