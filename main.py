@@ -190,27 +190,58 @@ def main(page: ft.Page):
     create_table(con)
     add_all_assets(con)
 
-    # df = find_assets_by_keyword(con, None)
-    df = find_assets_by_keyword(con, '하이닉스')
+    df = find_assets_by_keyword(con, None)
 
-    table_assets = ft.DataTable(
-        columns=[
-            ft.DataColumn(ft.Text(str.upper(col))) 
-            for col in df.columns
-        ],
-        rows=[
+
+    # DataTable
+    def create_rows(df) -> ft.DataRow:
+        return [
             ft.DataRow(
                 cells=[
                     ft.DataCell(ft.Text(str(value))) 
                     for value in row
                 ]
             ) for row in df.values
+        ]
+
+
+    table_assets = ft.DataTable(
+        columns=[
+            ft.DataColumn(ft.Text(str.upper(col))) 
+            for col in df.columns
         ],
+        rows= create_rows(df),
+    )
+
+
+    # Filtering
+    def on_filter_change(e):
+        # 입력된 텍스트로 asset 테이블 검색
+        filtered_df = find_assets_by_keyword(con, e.control.value)
+
+        table_assets.rows.clear()
+        table_assets.rows = create_rows(filtered_df)
+
+        page.update()
+
+
+    filter_input = ft.Container(
+        ft.TextField(
+            label="종목 검색",
+            prefix_icon=ft.Icons.SEARCH,
+            hint_text="종목명을 입력하세요",
+            hint_style=ft.TextStyle(color=ft.Colors.GREY_700),
+            margin=16,
+            expand=True,
+            on_submit=on_filter_change,
+        )
     )
 
     page.add(
+        filter_input,
         table_assets,
     )
+
 
 
 if __name__ == "__main__":
